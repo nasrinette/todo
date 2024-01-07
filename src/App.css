@@ -1,0 +1,35 @@
+* {
+  background-color: rgb(255, 101, 126);
+}
+h1 {
+  text-align: center;
+  color: #fff;
+}
+input {
+  padding: 10px;
+  color: #fff;
+  border-color: #fff;
+}
+button {
+  background-color: #fff;
+  padding: 10px;
+  border-color: #fff;
+}
+button:hover {
+  background-color: antiquewhite;
+}
+.add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tasks,
+h3,
+.white-l,
+h4,
+p {
+  background-color: #fff;
+}
+.tasks {
+  margin-top: 20px;
+}
