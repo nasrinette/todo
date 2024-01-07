@@ -36,16 +36,19 @@ function App() {
     setTasks(tasks.filter((task, _) => task.id !== taskId));
   };
   const [tasks, setTasks] = useState<TaskApp[]>(storedTasks);
+  const [search, setSearch] = useState("");
   const today = new Date().toISOString().split("T")[0];
-
+  const upcomingTasks = tasks.filter(
+    (task) => task.deadline === today && task.isCompleted === false
+  );
   const [deadline, setDeadline] = useState(today);
   useEffect(() => {
-    console.log("tasks", tasks);
-    console.log(localStorage);
+    upcomingTasks.length !== 0 ? setPopup(true) : setPopup(false);
     localStorage.setItem("tasks", JSON.stringify(tasks));
-    // console.log("stored tasks", storedTasks);
   }, [tasks]);
-  //title, urgency, deadline, completed/pending,
+
+  const [popup, setPopup] = useState(false);
+
   return (
     <div>
       <h1>Welcome to Todo App</h1>
@@ -101,113 +104,148 @@ function App() {
         </button>
         <button onClick={() => setTasks([])}>Remove all</button>
       </div>
-      <div>
-        <Tabs>
-          <TabList>
-            <Tab>Uncompleted</Tab>
-            <Tab>Completed</Tab>
-          </TabList>
-          <TabPanel>
-            {tasks.length != 0 && (
-              <>
-                {tasks.map((task) => (
-                  <div className="tasks" key={task.id}>
-                    {!task.isCompleted && (
-                      <>
-                        {" "}
-                        <FaRegTrashAlt
-                          onClick={() => removeTask(task.id)}
-                          style={{
-                            backgroundColor: "white",
-                            paddingTop: "10px",
-                          }}
-                          size="30"
-                          color="black"
-                        />{" "}
-                        <MdEdit
-                          style={{ backgroundColor: "white" }}
-                          size="30"
-                          color="black"
-                        />
-                        <Task
-                          title={task.title}
-                          deadline={task.deadline}
-                          isUrgent={task.isUrgent}
-                        />{" "}
-                        <label className="white-l" htmlFor="completed">
-                          Is this completed?
-                        </label>
-                        <input
-                          id="completed"
-                          type="checkbox"
-                          checked={task.isCompleted}
-                          onChange={() => updateTask(task.id)}
-                        />
-                      </>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-          </TabPanel>
-          <TabPanel>
-            {tasks.length != 0 && (
-              <>
-                {tasks.map((task) => (
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <div>
+          <Tabs>
+            <TabList>
+              <Tab>Uncompleted</Tab>
+              <Tab>Completed</Tab>
+            </TabList>
+            <TabPanel>
+              {tasks.length != 0 && (
+                <>
+                  {tasks.map((task) => (
+                    <div className="tasks" key={task.id}>
+                      {!task.isCompleted && (
+                        <>
+                          {" "}
+                          <FaRegTrashAlt
+                            onClick={() => removeTask(task.id)}
+                            style={{
+                              backgroundColor: "white",
+                              paddingTop: "10px",
+                            }}
+                            size="30"
+                            color="black"
+                          />{" "}
+                          <MdEdit
+                            style={{ backgroundColor: "white" }}
+                            size="30"
+                            color="black"
+                          />
+                          <Task
+                            title={task.title}
+                            deadline={task.deadline}
+                            isUrgent={task.isUrgent}
+                          />{" "}
+                          <label className="white-l" htmlFor="completed">
+                            Is this completed?
+                          </label>
+                          <input
+                            id="completed"
+                            type="checkbox"
+                            checked={task.isCompleted}
+                            onChange={() => updateTask(task.id)}
+                          />
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
+            </TabPanel>
+            <TabPanel>
+              {tasks.length != 0 && (
+                <>
+                  {tasks.map((task) => (
+                    <div className="tasks" key={task.title}>
+                      {task.isCompleted && (
+                        <>
+                          {" "}
+                          <FaRegTrashAlt
+                            onClick={() => removeTask(task.id)}
+                            style={{
+                              backgroundColor: "white",
+                              paddingTop: "10px",
+                            }}
+                            size="30"
+                            color="black"
+                          />{" "}
+                          <MdEdit
+                            style={{ backgroundColor: "white" }}
+                            size="30"
+                            color="black"
+                          />
+                          <Task
+                            title={task.title}
+                            deadline={task.deadline}
+                            isUrgent={task.isUrgent}
+                          />{" "}
+                          <label className="white-l" htmlFor="completed">
+                            Is this completed?
+                          </label>
+                          <input
+                            id="completed"
+                            type="checkbox"
+                            checked={task.isCompleted}
+                            onChange={() => updateTask(task.id)}
+                          />
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
+            </TabPanel>
+          </Tabs>
+        </div>
+
+        <div>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search a task"
+          />
+          {tasks.length != 0 && (
+            <>
+              {tasks
+                .filter((task) =>
+                  task.title.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((task) => (
                   <div className="tasks" key={task.title}>
-                    {task.isCompleted && (
-                      <>
-                        {" "}
-                        <FaRegTrashAlt
-                          onClick={() => removeTask(task.id)}
-                          style={{
-                            backgroundColor: "white",
-                            paddingTop: "10px",
-                          }}
-                          size="30"
-                          color="black"
-                        />{" "}
-                        <MdEdit
-                          style={{ backgroundColor: "white" }}
-                          size="30"
-                          color="black"
-                        />
-                        <Task
-                          title={task.title}
-                          deadline={task.deadline}
-                          isUrgent={task.isUrgent}
-                        />{" "}
-                        <label className="white-l" htmlFor="completed">
-                          Is this completed?
-                        </label>
-                        <input
-                          id="completed"
-                          type="checkbox"
-                          checked={task.isCompleted}
-                          onChange={() => updateTask(task.id)}
-                        />
-                      </>
-                    )}
+                    <Task
+                      title={task.title}
+                      deadline={task.deadline}
+                      isUrgent={task.isUrgent}
+                    />
                   </div>
                 ))}
-              </>
-            )}
-          </TabPanel>
-        </Tabs>
+            </>
+          )}
+        </div>
       </div>
+
+      {popup && (
+        <div className="popup">
+          <h1>
+            Today is deadline of {upcomingTasks.length} uncompleted tasks!
+          </h1>
+          {upcomingTasks.map((task) => (
+            <div className="tasks" key={task.title}>
+              <Task
+                title={task.title}
+                deadline={task.deadline}
+                isUrgent={task.isUrgent}
+              />
+            </div>
+          ))}
+          <button onClick={() => setPopup(false)}>Ok, close</button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
-{
-  /* <button
-              onClick={() => {
-                task.title = "";
-                console.log("clicked2");
-              }}
-              style={{ backgroundColor: "red" }}
-            >
-              Remove
-            </button> */
-}
